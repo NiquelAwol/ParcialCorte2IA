@@ -542,6 +542,15 @@ def tarea_5_perceptron_numpy(df_clean, base_dir):
     plt.close()
     print(f"[OK] Gráfico de frontera de decisión guardado en: {ruta_frontera}")
 
+    df_err = df_clean[mascara_err].copy()
+    df_err["prob_predicha"] = prob_final[mascara_err].round(4)
+    df_err["clase_predicha"] = y_pred_final[mascara_err]
+
+    vn = int(np.sum((y.astype(int) == 0) & (y_pred_final == 0)))
+    fp = int(np.sum((y.astype(int) == 0) & (y_pred_final == 1)))
+    fn = int(np.sum((y.astype(int) == 1) & (y_pred_final == 0)))
+    vp = int(np.sum((y.astype(int) == 1) & (y_pred_final == 1)))
+
     return {
         "w": w,
         "b": b,
@@ -553,7 +562,8 @@ def tarea_5_perceptron_numpy(df_clean, base_dir):
         "aciertos": aciertos,
         "total": m,
         "mal_clasificados": mal_clasificados,
-        "df_errores": df_clean[mascara_err].copy()
+        "matriz_confusion": {"VN": vn, "FP": fp, "FN": fn, "VP": vp},
+        "df_errores": df_err
     }
 
 
@@ -587,9 +597,10 @@ def tarea_6_interpretacion(resultados):
     print("\n[6.2] Separabilidad lineal y registros del lado equivocado:")
     print(f"  • Los datos son aproximadamente linealmente separables: el perceptrón alcanza una")
     print(f"    exactitud de {resultados['exactitud_fin'] * 100:.2f}% ({resultados['aciertos']}/{resultados['total']} registros correctos).")
+    mc = resultados["matriz_confusion"]
+    print(f"  • Matriz de confusión en NumPy: VN = {mc['VN']}, FP = {mc['FP']}, FN = {mc['FN']}, VP = {mc['VP']}.")
     print(f"  • Quedan exactamente {resultados['mal_clasificados']} registros del lado equivocado de la frontera:")
-    print("    - 4 Falsos Positivos (clase real 0 predicha como 1): M008, M051, M056, M069.")
-    print("    - 6 Falsos Negativos (clase real 1 predicha como 0): M012, M017, M038, M040, M068, M071.")
+    print(resultados["df_errores"][["medicion_id", "estacion", "pm25_ugm3", "viento_m_s", "alerta_calidad", "clase_predicha", "prob_predicha"]].to_string(index=False))
 
     # 6.3 Inventar dos registros nuevos realistas, escalarlos y predecir probabilidad
     # Caso A (Esperado = 1): Hora pico en Terminal con alta contaminación y calma atmosférica

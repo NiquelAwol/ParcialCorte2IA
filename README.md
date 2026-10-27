@@ -292,19 +292,30 @@ El modelo se construyó **100% desde cero utilizando exclusivamente NumPy** (sin
 ### 2. Según la frontera de decisión, ¿los datos son aproximadamente linealmente separables? ¿Cuántos registros quedan del lado equivocado?
 
 - **¿Son aproximadamente linealmente separables?** **Sí.** La frontera lineal trazada por el perceptrón logra separar correctamente **`67` de los `77` registros válidos**, alcanzando una **exactitud final de `87.01%`** y reduciendo la pérdida logarítmica desde `0.6931` hasta `0.2969`.
-- **¿Cuántos registros quedan del lado equivocado?** Quedan exactamente **`10` registros** del lado equivocado de la frontera de decisión ($12.99\%$ del total), los cuales están resaltados con aro naranja en `frontera_decision.png`:
-  - **4 Falsos Positivos** (su clase real es `0`, pero quedan debajo de la recta en la zona de alerta `1`):
-    - `M008` (Terminal: $\text{PM}_{2.5}=45.5$, viento $=2.3$, $\hat{y}=0.8357$)
-    - `M051` (Terminal: $\text{PM}_{2.5}=45.8$, viento $=4.6$, $\hat{y}=0.5061$, caso justo sobre la frontera)
-    - `M056` (Universidad: $\text{PM}_{2.5}=36.9$, viento $=2.0$, $\hat{y}=0.7113$)
-    - `M069` (Centro: $\text{PM}_{2.5}=25.6$, viento $=1.2$, $\hat{y}=0.5593$)
-  - **6 Falsos Negativos** (su clase real es `1`, pero quedan arriba de la recta en la zona sin alerta `0`):
-    - `M012` (Centro: $\text{PM}_{2.5}=60.0$, viento $=7.2$, $\hat{y}=0.4317$)
-    - `M017` (Universidad: $\text{PM}_{2.5}=39.2$, viento $=3.9$, $\hat{y}=0.4507$)
-    - `M038` (Hospital: $\text{PM}_{2.5}=54.4$, viento $=6.2$, $\hat{y}=0.4564$)
-    - `M040` (Universidad: $\text{PM}_{2.5}=24.5$, viento $=1.5$, $\hat{y}=0.4763$)
-    - `M068` (Universidad: $\text{PM}_{2.5}=24.4$, viento $=1.9$, $\hat{y}=0.4037$)
-    - `M071` (Universidad: $\text{PM}_{2.5}=28.4$, viento $=5.0$, $\hat{y}=0.1037$)
+- **¿Cuántos registros quedan del lado equivocado?** Quedan exactamente **`10` registros** del lado equivocado de la frontera de decisión ($12.99\%$ del total), los cuales están resaltados con aro naranja en `frontera_decision.png`.
+
+#### Matriz de Confusión Calculada con NumPy ($n = 77$)
+
+| | **Predicho `0` (Sin Alerta)** | **Predicho `1` (Con Alerta)** | **Total Real** |
+| :--- | :---: | :---: | :---: |
+| **Real `0` (Sin Alerta)** | **38** (*Verdaderos Negativos, VN*) | **4** (*Falsos Positivos, FP*) | 42 |
+| **Real `1` (Con Alerta)** | **6** (*Falsos Negativos, FN*) | **29** (*Verdaderos Positivos, VP*) | 35 |
+| **Total Predicho** | 44 | 33 | **77** (`67` aciertos = **`87.01%`**) |
+
+#### Detalle de los 10 Registros del Lado Equivocado de la Frontera
+
+| `medicion_id` | `estacion` | `pm25_ugm3` ($\mu\text{g/m}^3$) | `viento_m_s` ($\text{m/s}$) | Clase Real ($y$) | Clase Predicha ($\hat{y}_{\text{bin}}$) | Probabilidad $\hat{y}$ | Tipo de Error |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| `M008` | Terminal | `45.5` | `2.3` | `0` | `1` | `0.8357` | Falso Positivo (FP) |
+| `M012` | Centro | `60.0` | `7.2` | `1` | `0` | `0.4317` | Falso Negativo (FN) |
+| `M017` | Universidad | `39.2` | `3.9` | `1` | `0` | `0.4507` | Falso Negativo (FN) |
+| `M038` | Hospital | `54.4` | `6.2` | `1` | `0` | `0.4564` | Falso Negativo (FN) |
+| `M040` | Universidad | `24.5` | `1.5` | `1` | `0` | `0.4763` | Falso Negativo (FN) |
+| `M051` | Terminal | `45.8` | `4.6` | `0` | `1` | `0.5061` | Falso Positivo (FP, en el borde) |
+| `M056` | Universidad | `36.9` | `2.0` | `0` | `1` | `0.7113` | Falso Positivo (FP) |
+| `M068` | Universidad | `24.4` | `1.9` | `1` | `0` | `0.4037` | Falso Negativo (FN) |
+| `M069` | Centro | `25.6` | `1.2` | `0` | `1` | `0.5593` | Falso Positivo (FP) |
+| `M071` | Universidad | `28.4` | `5.0` | `1` | `0` | `0.1037` | Falso Negativo (FN) |
 
 ---
 
