@@ -1,0 +1,78 @@
+medicion_id,estacion,pm25_ugm3,viento_m_s,alerta_calidad
+M001,Terminal,52.9,2.0,1
+M002,Universidad,79.4,0.6,1
+M003,Zona Industrial,12.3,7.9,0
+M004,Terminal,43.0,7.7,0
+M005,Centro,34.7,5.2,0
+M007,Terminal,71.3,4.9,1
+M008,Terminal,45.5,2.3,0
+M009,Terminal,50.9,5.4,1
+M059,Universidad,74.0,7.1,1
+M011,Hospital,46.7,6.0,0
+M012,Centro,60.0,7.2,1
+M013,Zona Industrial,19.9,6.5,0
+M014,Universidad,24.9,2.3,0
+M015,Zona Industrial,29.4,1.1,1
+M016,Hospital,43.6,7.8,0
+M017,Universidad,39.2,3.9,1
+M018,Hospital,42.1,6.1,0
+M019,Zona Industrial,50.1,7.6,0
+M020,Centro,64.0,2.4,1
+M022,Universidad,50.4,3.1,1
+M023,Universidad,65.2,5.2,1
+M024,Centro,33.5,6.4,0
+M025,Universidad,31.4,4.6,0
+M026,Universidad,21.5,5.6,0
+M027,Zona Industrial,59.3,7.2,0
+M028,Hospital,33.3,7.4,0
+M029,Terminal,33.3,3.5,0
+M030,Zona Industrial,52.9,0.7,1
+M031,Zona Industrial,31.1,3.9,0
+M032,Universidad,55.8,7.0,0
+M033,Centro,50.9,0.7,1
+M034,Universidad,43.0,6.1,0
+M035,Terminal,53.1,2.7,1
+M036,Hospital,52.5,6.0,0
+M037,Zona Industrial,30.3,3.9,0
+M038,Hospital,54.4,6.2,1
+M039,Terminal,21.7,5.4,0
+M040,Universidad,24.5,1.5,1
+M041,Terminal,46.7,1.8,1
+M042,Terminal,17.5,4.4,0
+M043,Zona Industrial,49.5,6.4,0
+M044,Universidad,69.5,5.6,1
+M045,Universidad,69.1,5.4,1
+M046,Zona Industrial,29.0,3.7,0
+M047,Hospital,16.7,7.8,0
+M048,Zona Industrial,25.2,7.7,0
+M049,Terminal,56.2,2.1,1
+M050,Terminal,47.2,3.1,1
+M051,Terminal,45.8,4.6,0
+M052,Universidad,65.1,0.7,1
+M053,Universidad,7.4,5.1,0
+M054,Zona Industrial,71.5,3.6,1
+M055,Hospital,41.6,4.9,0
+M056,Universidad,36.9,2.0,0
+M057,Terminal,59.3,8.0,0
+M058,Universidad,24.1,1.3,1
+M060,Terminal,50.8,2.8,1
+M061,Hospital,67.0,7.3,1
+M062,Universidad,11.6,7.5,0
+M066,Terminal,60.3,3.5,1
+M067,Centro,5.9,2.3,0
+M063,Universidad,15.7,3.3,0
+M064,Zona Industrial,72.9,3.9,1
+M065,Centro,12.1,6.7,0
+M068,Universidad,24.4,1.9,1
+M069,Centro,25.6,1.2,0
+M070,Terminal,68.2,0.6,1
+M071,Universidad,28.4,5.0,1
+M072,Zona Industrial,21.2,7.9,0
+M073,Zona Industrial,6.6,5.5,0
+M074,Terminal,26.8,0.9,1
+M075,Universidad,70.1,6.4,1
+M076,Universidad,45.5,2.6,1
+M077,Hospital,7.4,3.5,0
+M078,Zona Industrial,11.5,5.6,0
+M079,Hospital,24.8,2.4,0
+M080,Universidad,62.8,3.6,1
