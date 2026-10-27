@@ -193,3 +193,34 @@ Durante la auditoría del archivo `data/grupo_05.csv` se identificaron y corrigi
 >   La estandarización Z-score calcula $z_1 = \frac{x_1 - \mu_1}{\sigma_1}$. Sin corregir `70100.0`, la media se dispara a **`950.78`** y la desviación estándar a **`7983.79`**. Como consecuencia:
 >   1. **Colapso de varianza en los datos reales:** Las 76 mediciones normales (entre `5.9` y `79.4` $\mu\text{g/m}^3$) quedarían comprimidas en un intervalo minúsculo de valores estandarizados entre $z_1 = -0.118$ y $z_1 = -0.109$ (una diferencia de apenas $0.009$ unidades entre el aire más limpio y el más contaminado), mientras que `M075` tendría $z_1 = +8.66$.
 >   2. **Degradación del aprendizaje:** Durante el descenso del gradiente ($dw = \frac{1}{m} X^T (\hat{y} - y)$), el único punto extremo ($z_1 = +8.66$) dominaría la derivada parcial respecto a $w_1$, impidiendo que el perceptrón distinga el umbral real de $\text{PM}_{2.5}$ para las demás 76 mediciones y reduciendo drásticamente la exactitud del clasificador.
+
+---
+
+## Tarea 4. Visualización con Seaborn
+
+A partir del conjunto de datos depurado (`data/grupo_05_limpio.csv`, 77 registros válidos), se generaron dos visualizaciones estadísticas utilizando **Seaborn** y **Matplotlib**:
+
+### 4.1 Gráfico 1: Dispersión de `pm25_ugm3` vs. `viento_m_s` coloreada por `alerta_calidad`
+
+![Gráfico 1: Dispersión PM2.5 vs. Viento](./grafico1_dispersion.png)
+
+- **¿Qué muestra el gráfico?**  
+  Muestra la distribución bidimensional de las 77 mediciones válidas de Cartago relacionando la concentración de material particulado fino $\text{PM}_{2.5}$ (`pm25_ugm3`, eje horizontal en $\mu\text{g/m}^3$) y la velocidad del viento (`viento_m_s`, eje vertical en $\text{m/s}$), diferenciando por color y marcador la variable objetivo `alerta_calidad` (`0`: Sin Alerta en círculos verdes, $n=42$; `1`: Con Alerta en equis rojas, $n=35$).
+- **¿Qué conclusión se extrae?**  
+  Se observa una relación inversa clara que gobierna la activación de alertas ambientales en Cartago:
+  1. Los episodios **con alerta (`alerta_calidad = 1`)** se agrupan hacia la derecha y parte inferior del plano, combinando **altas concentraciones de $\text{PM}_{2.5}$** (media de **`54.26` $\mu\text{g/m}^3$**, mediana de **`54.40` $\mu\text{g/m}^3$**, rango `24.1` a `79.4` $\mu\text{g/m}^3$) con **baja velocidad del viento** (media de **`3.34` $\text{m/s}$**, mediana de **`3.10` $\text{m/s}$**). Incluso niveles moderados de $\text{PM}_{2.5}$ (`24.1` a `30.0` $\mu\text{g/m}^3$) disparan alerta cuando el viento cae por debajo de `2.0` $\text{m/s}$ debido al estancamiento atmosférico.
+  2. Los episodios **sin alerta (`alerta_calidad = 0`)** se ubican en la región superior e izquierda, caracterizados por **menor carga de $\text{PM}_{2.5}$** (media de **`30.50` $\mu\text{g/m}^3$**, mediana de **`30.70` $\mu\text{g/m}^3$**) y **vientos fuertes** (media de **`5.40` $\text{m/s}$**, mediana de **`5.60` $\text{m/s}$**). Cuando el viento supera los `6.0` $\text{m/s}$, logra dispersar concentraciones de hasta `59.3` $\mu\text{g/m}^3$ (`M027` y `M057`) evitando la declaratoria de alerta.
+  3. Ambas clases son **aproximadamente separables mediante una frontera diagonal**, validando el uso de un perceptrón con entradas `pm25_ugm3` y `viento_m_s`.
+
+---
+
+### 4.2 Gráfico 2: Comparación de `pm25_ugm3` entre Clases (`sns.boxplot`) y Alertas por Estación (`sns.countplot`)
+
+![Gráfico 2: Comparación Boxplot y Countplot](./grafico2_comparacion.png)
+
+- **¿Qué muestra el gráfico?**  
+  - **Panel A (`sns.boxplot`):** Compara la distribución estadística (mediana, rango intercuartílico y dispersión individual) de la variable numérica `pm25_ugm3` entre la Clase `0` (Sin Alerta) y la Clase `1` (Con Alerta).
+  - **Panel B (`sns.countplot`):** Compara la frecuencia de mediciones con alerta (`1`) y sin alerta (`0`) en cada una de las 5 estaciones de monitoreo de Cartago (`Universidad`, `Terminal`, `Zona Industrial`, `Hospital` y `Centro`).
+- **¿Qué conclusión se extrae?**  
+  1. **Diferencia contundente en niveles de $\text{PM}_{2.5}$ (Panel A):** La mediana de $\text{PM}_{2.5}$ en los eventos con alerta (**`54.40` $\mu\text{g/m}^3$**, con rango intercuartílico $Q_1 = 46.95$ a $Q_3 = 67.60\ \mu\text{g/m}^3$) es un **$77.2\%$ más alta** que la mediana de los eventos sin alerta (**`30.70` $\mu\text{g/m}^3$**, con $Q_1 = 18.10$ a $Q_3 = 43.00\ \mu\text{g/m}^3$). Más del $75\%$ de las alertas ocurren por encima de `46.95` $\mu\text{g/m}^3$.
+  2. **Focos críticos geográficos en Cartago (Panel B):** Las estaciones **Universidad** (**15 alertas** de 24 mediciones, **$62.5\%$**) y **Terminal** (**11 alertas** de 18 mediciones, **$61.1\%$**) concentran conjuntamente **`26` de las `35` alertas totales ($74.29\%$)** del municipio, debido al alto flujo de transporte intermunicipal/estudiantil y menor ventilación urbana. En cambio, **Hospital** ($2/11$ alertas, $18.2\%$) y **Zona Industrial** ($4/16$ alertas, $25.0\%$) presentan menor proporción de alertas gracias a corredores de viento más abiertos (velocidades medias de `5.58` y `5.65` $\text{m/s}$, respectivamente).

@@ -9,6 +9,8 @@ Archivo asignado: grupo_05.csv (Calidad del aire - mediciones en Cartago, Valle 
 import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def obtener_directorio_base():
@@ -150,13 +152,135 @@ def tarea_3_limpieza_datos(df_raw, ruta_salida):
     return df
 
 
+def tarea_4_visualizacion_seaborn(df_clean, base_dir):
+    """
+    Tarea 4: Visualización con Seaborn.
+      - Gráfico 1: Dispersión de las dos variables numéricas (pm25_ugm3 vs viento_m_s)
+        coloreada por la columna objetivo (alerta_calidad).
+      - Gráfico 2: Comparación de variable numérica por clase (sns.boxplot) y de la
+        columna categórica 'estacion' frente al objetivo (sns.countplot).
+    """
+    print("\n" + "=" * 78)
+    print("  TAREA 4. VISUALIZACIÓN CON SEABORN")
+    print("=" * 78)
+
+    sns.set_theme(style="whitegrid")
+    df_vis = df_clean.copy()
+    df_vis["Estado de Alerta"] = df_vis["alerta_calidad"].map({
+        0: "0: Sin Alerta (Normal)",
+        1: "1: Con Alerta (Crítico)"
+    })
+    paleta = {
+        "0: Sin Alerta (Normal)": "#10b981",
+        "1: Con Alerta (Crítico)": "#ef4444"
+    }
+
+    # Gráfico 1: Dispersión de las dos variables numéricas coloreada por el objetivo
+    plt.figure(figsize=(9, 6))
+    ax1 = sns.scatterplot(
+        data=df_vis,
+        x="pm25_ugm3",
+        y="viento_m_s",
+        hue="Estado de Alerta",
+        style="Estado de Alerta",
+        palette=paleta,
+        markers={"0: Sin Alerta (Normal)": "o", "1: Con Alerta (Crítico)": "X"},
+        s=120,
+        alpha=0.9,
+        edgecolor="black"
+    )
+    plt.title(
+        "Gráfico 1: Concentración de PM2.5 vs. Velocidad del Viento por Alerta de Calidad (Cartago)",
+        fontsize=12.5,
+        weight="bold",
+        pad=14
+    )
+    plt.xlabel("Concentración de Material Particulado PM2.5 (µg/m³)", fontsize=11, weight="bold")
+    plt.ylabel("Velocidad del Viento (m/s)", fontsize=11, weight="bold")
+    plt.legend(title="alerta_calidad (Objetivo)", loc="upper left", frameon=True)
+    plt.tight_layout()
+
+    ruta_g1 = os.path.join(base_dir, "grafico1_dispersion.png")
+    plt.savefig(ruta_g1, dpi=300)
+    plt.close()
+    print(f"\n[OK] Gráfico 1 guardado en: {ruta_g1}")
+    print("     Interpretación: Muestra que las alertas (clase 1, n=35) se concentran en valores")
+    print("     altos de PM2.5 (media 54.26 µg/m³) y vientos bajos/moderados (media 3.34 m/s),")
+    print("     mientras que sin alerta (clase 0, n=42) predomina PM2.5 bajo (media 30.50 µg/m³)")
+    print("     y mayor ventilación (media 5.40 m/s), evidenciando separabilidad lineal aproximada.")
+
+    # Gráfico 2: Comparación por clase (sns.boxplot y sns.countplot)
+    fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.8))
+
+    sns.boxplot(
+        data=df_vis,
+        x="Estado de Alerta",
+        y="pm25_ugm3",
+        hue="Estado de Alerta",
+        palette=paleta,
+        width=0.45,
+        ax=axes[0],
+        legend=False
+    )
+    sns.stripplot(
+        data=df_vis,
+        x="Estado de Alerta",
+        y="pm25_ugm3",
+        color="black",
+        alpha=0.45,
+        jitter=0.15,
+        size=6,
+        ax=axes[0]
+    )
+    axes[0].set_title("A) Distribución de PM2.5 según Clase (Boxplot)", fontsize=11.5, weight="bold")
+    axes[0].set_xlabel("Clase Objetivo (alerta_calidad)", fontsize=10.5, weight="bold")
+    axes[0].set_ylabel("Concentración PM2.5 (µg/m³)", fontsize=10.5, weight="bold")
+
+    orden_estaciones = ["Universidad", "Terminal", "Zona Industrial", "Hospital", "Centro"]
+    sns.countplot(
+        data=df_vis,
+        x="estacion",
+        hue="Estado de Alerta",
+        order=orden_estaciones,
+        palette=paleta,
+        edgecolor="black",
+        ax=axes[1]
+    )
+    axes[1].set_title("B) Alertas de Calidad del Aire por Estación (Countplot)", fontsize=11.5, weight="bold")
+    axes[1].set_xlabel("Estación de Monitoreo en Cartago", fontsize=10.5, weight="bold")
+    axes[1].set_ylabel("Cantidad de Mediciones", fontsize=10.5, weight="bold")
+    axes[1].tick_params(axis="x", rotation=15)
+    axes[1].legend(title="alerta_calidad", loc="upper right")
+
+    for container in axes[1].containers:
+        axes[1].bar_label(container, fontsize=9.5, weight="bold", padding=2)
+
+    fig.suptitle(
+        "Gráfico 2: Comparación de PM2.5 y Estaciones de Monitoreo frente a la Alerta de Calidad",
+        fontsize=13,
+        weight="bold",
+        y=1.02
+    )
+    plt.tight_layout()
+
+    ruta_g2 = os.path.join(base_dir, "grafico2_comparacion.png")
+    plt.savefig(ruta_g2, dpi=300, bbox_inches="tight")
+    plt.close()
+    print(f"[OK] Gráfico 2 guardado en: {ruta_g2}")
+    print("     Interpretación: El boxplot (Panel A) demuestra que la mediana de PM2.5 sube de")
+    print("     30.70 µg/m³ (clase 0) a 54.40 µg/m³ (clase 1). El countplot (Panel B) revela que")
+    print("     Universidad (15/24 alertas, 62.5%) y Terminal (11/18 alertas, 61.1%) concentran")
+    print("     26 de las 35 alertas totales (74.3%) registradas en Cartago.")
+
+
 def main():
     base_dir = obtener_directorio_base()
     ruta_csv = os.path.join(base_dir, "data", "grupo_05.csv")
     ruta_limpio = os.path.join(base_dir, "data", "grupo_05_limpio.csv")
 
     df_raw = tarea_2_carga_inspeccion(ruta_csv)
-    tarea_3_limpieza_datos(df_raw, ruta_limpio)
+    df_clean = tarea_3_limpieza_datos(df_raw, ruta_limpio)
+    tarea_4_visualizacion_seaborn(df_clean, base_dir)
 
 
 if __name__ == "__main__":
