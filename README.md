@@ -12,6 +12,18 @@
 
 ---
 
+## Tabla de Contenido
+
+1. [Tarea 1. Configuración del Entorno](#tarea-1-configuración-del-entorno)
+2. [Tarea 2. Carga e Inspección de Datos (`grupo_05.csv`)](#tarea-2-carga-e-inspección-de-datos-grupo_05csv)
+3. [Tarea 3. Calidad y Limpieza de Datos con Pandas](#tarea-3-calidad-y-limpieza-de-datos-con-pandas)
+4. [Tarea 4. Visualización con Seaborn](#tarea-4-visualización-con-seaborn)
+5. [Tarea 5. Perceptrón desde Cero con NumPy](#tarea-5-perceptrón-desde-cero-con-numpy)
+6. [Tarea 6. Interpretación de Resultados](#tarea-6-interpretación-de-resultados)
+7. [Tarea 7. Verificación de Entregables del Repositorio](#tarea-7-verificación-de-entregables-del-repositorio)
+
+---
+
 ## Tarea 1. Configuración del Entorno
 
 El proyecto cuenta con una arquitectura reproducible basada en contenedores Docker con **Python 3.12**, **NumPy**, **Pandas**, **Matplotlib** y **Seaborn**, usando el contenedor `parcial2_ia` para no entrar en conflicto con el contenedor `python_ia` de las sesiones de clase.
@@ -23,7 +35,13 @@ parcial2/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
+├── .gitignore
+├── .dockerignore
 ├── README.md
+├── grafico1_dispersion.png
+├── grafico2_comparacion.png
+├── curva_aprendizaje.png
+├── frontera_decision.png
 ├── data/
 │   ├── grupo_05.csv
 │   └── grupo_05_limpio.csv
@@ -363,6 +381,14 @@ Se diseñaron dos escenarios realistas para Cartago y se escalaron utilizando la
 | `data/grupo_05_limpio.csv` | Dataset depurado con Pandas (77 filas limpias) | Incluido |
 | `grafico1_dispersion.png` | Gráfico 1 Seaborn: Dispersión `pm25_ugm3` vs `viento_m_s` por clase | Incluido |
 | `grafico2_comparacion.png` | Gráfico 2 Seaborn: Boxplot por clase y Countplot por estación | Incluido |
-| `curva_aprendizaje.png` | Gráfico 3 Perceptrón: Curva de pérdida logarítmica en 300 épocas | Incluido |
-| `frontera_decision.png` | Gráfico 4 Perceptrón: Frontera de decisión en unidades originales | Incluido |
+| `curva_aprendizaje.png` | Gráfico 3 Perceptrón: Curva de pérdida logarítmica y exactitud en 300 épocas | Incluido |
+| `frontera_decision.png` | Gráfico 4 Perceptrón: Frontera de decisión en unidades originales y casos nuevos | Incluido |
 | `README.md` | Documentación completa de las Tareas 1 a 7 con cifras específicas | Incluido |
+
+---
+
+### Resumen Ejecutivo de Resultados – Grupo 05
+
+- **Depuración de datos:** De `84` registros exportados originalmente se consolidaron **`77` registros válidos** (`42` de clase `0` y `35` de clase `1`), corrigiendo el registro `M075` (`70100.0` $\text{ng/m}^3 \rightarrow$ `70.1` $\mu\text{g/m}^3$) que alteraba la media de `pm25_ugm3` de **`41.30`** a **`950.78` $\mu\text{g/m}^3$**.
+- **Desempeño del Perceptrón en NumPy:** Tras `300` épocas con $\alpha = 0.1$, el modelo convergió a los pesos $w_1 = +2.1246$, $w_2 = -1.5933$, $b = -0.3696$, reduciendo la pérdida logarítmica de **`0.6931`** a **`0.2969`** y alcanzando una exactitud del **`87.01%`** (`67 / 77` aciertos).
+- **Impacto local en Cartago:** Las estaciones **Universidad** (`62.5%` de alertas) y **Terminal** (`61.1%` de alertas) concentran el **`74.29%`** de los eventos críticos del municipio, confirmando la necesidad de medidas focalizadas en ambos sectores.
