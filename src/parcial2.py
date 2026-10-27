@@ -523,6 +523,28 @@ def tarea_5_perceptron_numpy(df_clean, base_dir):
         label=f"Lado equivocado ({mal_clasificados} registros)"
     )
 
+    # Graficar los 2 nuevos registros realistas de la Tarea 6.3
+    plt.scatter(
+        [68.0],
+        [1.5],
+        color="#7c3aed",
+        edgecolor="black",
+        s=240,
+        marker="*",
+        zorder=6,
+        label="Nuevo A (68.0, 1.5) -> P=99.05% (Clase 1)"
+    )
+    plt.scatter(
+        [18.0],
+        [6.8],
+        color="#0284c7",
+        edgecolor="black",
+        s=240,
+        marker="*",
+        zorder=6,
+        label="Nuevo B (18.0, 6.8) -> P=1.02% (Clase 0)"
+    )
+
     plt.title(
         "Frontera de Decisión del Perceptrón en Unidades Originales (PM2.5 vs. Viento)",
         fontsize=12.5,
@@ -533,12 +555,18 @@ def tarea_5_perceptron_numpy(df_clean, base_dir):
     plt.ylabel("Velocidad del Viento (m/s)", fontsize=11, weight="bold")
     plt.xlim(x1_min, x1_max)
     plt.ylim(x2_min, x2_max)
-    plt.legend(loc="upper left", fontsize=9.5, framealpha=0.95)
+    plt.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.13),
+        ncol=2,
+        fontsize=9.2,
+        framealpha=0.95
+    )
     plt.grid(True, linestyle=":", alpha=0.5)
     plt.tight_layout()
 
     ruta_frontera = os.path.join(base_dir, "frontera_decision.png")
-    plt.savefig(ruta_frontera, dpi=300)
+    plt.savefig(ruta_frontera, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"[OK] Gráfico de frontera de decisión guardado en: {ruta_frontera}")
 
