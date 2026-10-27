@@ -396,34 +396,60 @@ def tarea_5_perceptron_numpy(df_clean, base_dir):
     print(f"  • Exactitud inicial           : {exactitud_ini * 100:.2f}%")
     print(f"  • Exactitud final             : {exactitud_fin * 100:.2f}% ({aciertos}/{m} aciertos, {mal_clasificados} en el lado equivocado)")
 
-    # 5. Generar curva_aprendizaje.png (pérdida por época)
-    plt.figure(figsize=(8.5, 5.2))
-    plt.plot(range(1, epocas + 1), historial_perdida, color="#0284c7", linewidth=2.5, label="Pérdida Logarítmica (BCE)")
-    plt.title("Curva de Aprendizaje del Perceptrón (Descenso del Gradiente - 300 Épocas)", fontsize=12.5, weight="bold", pad=12)
-    plt.xlabel("Época", fontsize=11, weight="bold")
-    plt.ylabel("Pérdida Logarítmica (Binary Cross-Entropy)", fontsize=11, weight="bold")
-    plt.annotate(
-        f"Pérdida inicial: {historial_perdida[0]:.4f}",
+    # 5. Generar curva_aprendizaje.png (pérdida y exactitud registradas por época)
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.2))
+    epocas_rango = range(1, epocas + 1)
+
+    axes[0].plot(epocas_rango, historial_perdida, color="#0284c7", linewidth=2.5, label="Pérdida Logarítmica (BCE)")
+    axes[0].set_title("A) Evolución de la Pérdida Logarítmica por Época", fontsize=11.5, weight="bold")
+    axes[0].set_xlabel("Época", fontsize=10.5, weight="bold")
+    axes[0].set_ylabel("Pérdida Logarítmica (BCE)", fontsize=10.5, weight="bold")
+    axes[0].annotate(
+        f"Inicial: {historial_perdida[0]:.4f}",
         xy=(1, historial_perdida[0]),
         xytext=(35, historial_perdida[0] - 0.04),
-        arrowprops=dict(facecolor="#0f172a", shrink=0.08, width=1.2, headwidth=5),
-        fontsize=10,
+        arrowprops=dict(facecolor="#0f172a", shrink=0.08, width=1.1, headwidth=5),
+        fontsize=9.5,
         weight="bold"
     )
-    plt.annotate(
-        f"Pérdida final (época {epocas}): {perdida_fin:.4f}\nExactitud final: {exactitud_fin * 100:.2f}%",
+    axes[0].annotate(
+        f"Final (época {epocas}): {perdida_fin:.4f}",
         xy=(epocas, perdida_fin),
-        xytext=(epocas - 135, perdida_fin + 0.10),
-        arrowprops=dict(facecolor="#16a34a", shrink=0.08, width=1.2, headwidth=5),
-        fontsize=10,
+        xytext=(epocas - 145, perdida_fin + 0.09),
+        arrowprops=dict(facecolor="#0284c7", shrink=0.08, width=1.1, headwidth=5),
+        fontsize=9.5,
         weight="bold"
     )
-    plt.grid(True, linestyle="--", alpha=0.6)
-    plt.legend(loc="upper right", fontsize=10.5)
+    axes[0].grid(True, linestyle="--", alpha=0.6)
+    axes[0].legend(loc="upper right", fontsize=10)
+
+    exactitud_pct = [acc_ep * 100.0 for acc_ep in historial_exactitud]
+    axes[1].plot(epocas_rango, exactitud_pct, color="#16a34a", linewidth=2.5, label="Exactitud de Clasificación (%)")
+    axes[1].set_title("B) Evolución de la Exactitud por Época", fontsize=11.5, weight="bold")
+    axes[1].set_xlabel("Época", fontsize=10.5, weight="bold")
+    axes[1].set_ylabel("Exactitud (%)", fontsize=10.5, weight="bold")
+    axes[1].set_ylim(40, 95)
+    axes[1].annotate(
+        f"Exactitud final: {exactitud_fin * 100:.2f}% ({aciertos}/{m})",
+        xy=(epocas, exactitud_fin * 100.0),
+        xytext=(epocas - 165, exactitud_fin * 100.0 - 14),
+        arrowprops=dict(facecolor="#16a34a", shrink=0.08, width=1.1, headwidth=5),
+        fontsize=9.5,
+        weight="bold"
+    )
+    axes[1].grid(True, linestyle="--", alpha=0.6)
+    axes[1].legend(loc="lower right", fontsize=10)
+
+    fig.suptitle(
+        "Curva de Aprendizaje del Perceptrón con Descenso del Gradiente (300 Épocas)",
+        fontsize=13,
+        weight="bold",
+        y=1.02
+    )
     plt.tight_layout()
 
     ruta_curva = os.path.join(base_dir, "curva_aprendizaje.png")
-    plt.savefig(ruta_curva, dpi=300)
+    plt.savefig(ruta_curva, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"\n[OK] Gráfico de curva de aprendizaje guardado en: {ruta_curva}")
 
