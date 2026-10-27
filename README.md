@@ -3,9 +3,7 @@
 **Asignatura:** Inteligencia Artificial · Ingeniería de Sistemas (2026-02)  
 **Docente:** Ing. Jhon James Cano Sánchez  
 **Grupo:** 05  
-**Integrantes:**
-- **Andrés Felipe Mejía Suaza**
-- **Miguel Ángel Ramírez Gutiérrez**
+**Estudiante:** **Andrés Felipe Mejía Suaza**
 
 **Archivo Asignado:** `data/grupo_05.csv`  
 **Tema (Anexo A):** Calidad del aire – mediciones en Cartago, Valle del Cauca  

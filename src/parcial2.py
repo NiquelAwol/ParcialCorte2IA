@@ -2,7 +2,7 @@
 parcial2.py
 Segundo Parcial - Inteligencia Artificial (2026-02)
 Docente: Ing. Jhon James Cano Sánchez
-Grupo 05: Andrés Felipe Mejía Suaza & Miguel Ángel Ramírez Gutiérrez
+Estudiante: Andrés Felipe Mejía Suaza (Grupo 05)
 Archivo asignado: grupo_05.csv (Calidad del aire - mediciones en Cartago, Valle del Cauca)
 
 Flujo completo:
