@@ -234,6 +234,7 @@ def tarea_4_visualizacion_seaborn(df_clean, base_dir):
         ax=axes[0],
         legend=False
     )
+    np.random.seed(42)
     sns.stripplot(
         data=df_vis,
         x="Estado de Alerta",
