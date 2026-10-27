@@ -221,7 +221,17 @@ A partir del conjunto de datos depurado (`data/grupo_05_limpio.csv`, 77 registro
   - **Panel B (`sns.countplot`):** Compara la frecuencia de mediciones con alerta (`1`) y sin alerta (`0`) en cada una de las 5 estaciones de monitoreo de Cartago (`Universidad`, `Terminal`, `Zona Industrial`, `Hospital` y `Centro`).
 - **¿Qué conclusión se extrae?**  
   1. **Diferencia contundente en niveles de $\text{PM}_{2.5}$ (Panel A):** La mediana de $\text{PM}_{2.5}$ en los eventos con alerta (**`54.40` $\mu\text{g/m}^3$**, con rango intercuartílico $Q_1 = 46.95$ a $Q_3 = 67.60\ \mu\text{g/m}^3$) es un **$77.2\%$ más alta** que la mediana de los eventos sin alerta (**`30.70` $\mu\text{g/m}^3$**, con $Q_1 = 18.10$ a $Q_3 = 43.00\ \mu\text{g/m}^3$). Más del $75\%$ de las alertas ocurren por encima de `46.95` $\mu\text{g/m}^3$.
-  2. **Focos críticos geográficos en Cartago (Panel B):** Las estaciones **Universidad** (**15 alertas** de 24 mediciones, **$62.5\%$**) y **Terminal** (**11 alertas** de 18 mediciones, **$61.1\%$**) concentran conjuntamente **`26` de las `35` alertas totales ($74.29\%$)** del municipio, debido al alto flujo de transporte intermunicipal/estudiantil y menor ventilación urbana. En cambio, **Hospital** ($2/11$ alertas, $18.2\%$) y **Zona Industrial** ($4/16$ alertas, $25.0\%$) presentan menor proporción de alertas gracias a corredores de viento más abiertos (velocidades medias de `5.58` y `5.65` $\text{m/s}$, respectivamente).
+  2. **Focos críticos geográficos en Cartago (Panel B):** Las estaciones **Universidad** (**15 alertas** de 24 mediciones, **$62.5\%$**) y **Terminal** (**11 alertas** de 18 mediciones, **$61.1\%$**) concentran conjuntamente **`26` de las `35` alertas totales ($74.29\%$)** del municipio, debido al alto flujo de transporte intermunicipal/estudiantil y menor ventilación urbana (`4.06` y `3.65` $\text{m/s}$, respectivamente). En cambio, **Hospital** ($2/11$ alertas, $18.2\%$) y **Zona Industrial** ($4/16$ alertas, $25.0\%$) presentan menor proporción de alertas gracias a corredores de viento más abiertos (velocidades medias de `5.95` y `5.19` $\text{m/s}$, respectivamente).
+
+#### Resumen Estadístico por Estación (`df.groupby("estacion")`)
+
+| Estación en Cartago | Mediciones Válidas | $\text{PM}_{2.5}$ Promedio ($\mu\text{g/m}^3$) | Viento Promedio ($\text{m/s}$) | Alertas (`alerta_calidad = 1`) | Tasa de Alerta (%) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Universidad** | 24 | `43.33` | `4.06` | **15** | **`62.50%`** |
+| **Terminal** | 18 | **`47.25`** | **`3.65`** | **11** | **`61.11%`** |
+| **Zona Industrial** | 16 | `35.79` | `5.19` | 4 | `25.00%` |
+| **Centro** | 8 | `35.84` | `4.01` | 3 | `37.50%` |
+| **Hospital** | 11 | `39.10` | `5.95` | 2 | `18.18%` |
 
 ---
 

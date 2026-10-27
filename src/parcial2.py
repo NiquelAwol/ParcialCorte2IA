@@ -160,6 +160,16 @@ def tarea_3_limpieza_datos(df_raw, ruta_salida):
     df.to_csv(ruta_salida, index=False, encoding="utf-8")
     print(f"\n[OK] Archivo limpio guardado exitosamente en: {ruta_salida}")
 
+    print("\n[Resumen Estadístico por Estación de Monitoreo en Cartago (df.groupby('estacion'))]:")
+    resumen_estaciones = df.groupby("estacion").agg(
+        mediciones=("medicion_id", "count"),
+        pm25_promedio=("pm25_ugm3", "mean"),
+        viento_promedio=("viento_m_s", "mean"),
+        alertas=("alerta_calidad", "sum"),
+        tasa_alerta_pct=("alerta_calidad", lambda s: s.mean() * 100.0)
+    ).sort_values("alertas", ascending=False).round(2)
+    print(resumen_estaciones)
+
     return df
 
 
