@@ -224,3 +224,126 @@ A partir del conjunto de datos depurado (`data/grupo_05_limpio.csv`, 77 registro
 - **¿Qué conclusión se extrae?**  
   1. **Diferencia contundente en niveles de $\text{PM}_{2.5}$ (Panel A):** La mediana de $\text{PM}_{2.5}$ en los eventos con alerta (**`54.40` $\mu\text{g/m}^3$**, con rango intercuartílico $Q_1 = 46.95$ a $Q_3 = 67.60\ \mu\text{g/m}^3$) es un **$77.2\%$ más alta** que la mediana de los eventos sin alerta (**`30.70` $\mu\text{g/m}^3$**, con $Q_1 = 18.10$ a $Q_3 = 43.00\ \mu\text{g/m}^3$). Más del $75\%$ de las alertas ocurren por encima de `46.95` $\mu\text{g/m}^3$.
   2. **Focos críticos geográficos en Cartago (Panel B):** Las estaciones **Universidad** (**15 alertas** de 24 mediciones, **$62.5\%$**) y **Terminal** (**11 alertas** de 18 mediciones, **$61.1\%$**) concentran conjuntamente **`26` de las `35` alertas totales ($74.29\%$)** del municipio, debido al alto flujo de transporte intermunicipal/estudiantil y menor ventilación urbana. En cambio, **Hospital** ($2/11$ alertas, $18.2\%$) y **Zona Industrial** ($4/16$ alertas, $25.0\%$) presentan menor proporción de alertas gracias a corredores de viento más abiertos (velocidades medias de `5.58` y `5.65` $\text{m/s}$, respectivamente).
+
+---
+
+## Tarea 5. Perceptrón desde Cero con NumPy
+
+El modelo se construyó **100% desde cero utilizando exclusivamente NumPy** (sin Scikit-Learn ni librerías externas de Machine Learning) dentro de `src/parcial2.py`.
+
+### 5.1 Parámetros de Escalado Guardados (`X_std = (X - media_X) / desv_X`)
+
+| Variable de Entrada | Columna | Media de Entrenamiento ($\mu$) | Desviación Estándar ($\sigma$) |
+| :--- | :---: | :---: | :---: |
+| **$x_1$: Material Particulado $\text{PM}_{2.5}$** | `pm25_ugm3` | **`41.2974` $\mu\text{g/m}^3$** | **`19.4840` $\mu\text{g/m}^3$** |
+| **$x_2$: Velocidad del Viento** | `viento_m_s` | **`4.4636` $\text{m/s}$** | **`2.2419` $\text{m/s}$** |
+
+### 5.2 Funciones Implementadas y Entrenamiento por Descenso del Gradiente
+
+- **Función Sigmoide:** $\sigma(z) = \frac{1}{1 + e^{-z}}$
+- **Predicción de Probabilidad:** $\hat{y} = \sigma(X_{\text{std}} \cdot w + b)$
+- **Pérdida Logarítmica (Binary Cross-Entropy):** $L(y, \hat{y}) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y_i \ln(\hat{y}_i) + (1 - y_i)\ln(1 - \hat{y}_i) \right]$
+- **Gradientes Analíticos:** $dw = \frac{1}{m} X_{\text{std}}^T (\hat{y} - y)$, $\quad db = \frac{1}{m} \sum_{i=1}^{m} (\hat{y}_i - y_i)$
+- **Hiperparámetros:** Tasa de aprendizaje $\alpha = 0.1$, entrenamiento durante **`300` épocas**.
+
+### 5.3 Pesos, Pérdida y Exactitud (Inicial vs. Final)
+
+| Métrica / Parámetro | Estado Inicial (Época 0) | Estado Final (Época 300) |
+| :--- | :---: | :---: |
+| **Peso $w_1$ (`pm25_ugm3`)** | `0.0000` | **`+2.1246`** |
+| **Peso $w_2$ (`viento_m_s`)** | `0.0000` | **`-1.5933`** |
+| **Sesgo $b$ (`bias`)** | `0.0000` | **`-0.3696`** |
+| **Pérdida Logarítmica (BCE)** | `0.6931` | **`0.2969`** (reducción del $57.2\%$) |
+| **Exactitud (Accuracy)** | `45.45%` | **`87.01%` (`67 / 77` aciertos)** |
+
+### 5.4 Gráficos del Perceptrón
+
+#### Curva de Aprendizaje (`curva_aprendizaje.png`)
+![Curva de Aprendizaje del Perceptrón](./curva_aprendizaje.png)
+
+#### Frontera de Decisión en las Unidades Originales (`frontera_decision.png`)
+![Frontera de Decisión en Unidades Originales](./frontera_decision.png)
+
+> **Ecuación de la Frontera de Decisión ($P = 0.5$) en las unidades originales ($\mu\text{g/m}^3$ y $\text{m/s}$):**  
+> Partiendo de $w_1 \left(\frac{x_1 - \mu_1}{\sigma_1}\right) + w_2 \left(\frac{x_2 - \mu_2}{\sigma_2}\right) + b = 0$, al despejar la velocidad del viento ($x_2$) en función de la concentración de $\text{PM}_{2.5}$ ($x_1$) se obtiene:
+> $$\text{viento\_m\_s} = 0.153 \cdot \text{pm25\_ugm3} - 2.39$$
+> Todo registro ubicado **por debajo o a la derecha** de esta recta (alta contaminación $\text{PM}_{2.5}$ y/o poco viento) recibe una probabilidad $\hat{y} \ge 0.5$ (**Clase `1`: Alerta**).
+
+---
+
+## Tarea 6. Interpretación de Resultados
+
+### 1. ¿Qué significa el signo de `w1` y de `w2` en el contexto del problema? ¿Tiene sentido para Cartago?
+
+- **Signo de $w_1 = +2.1246$ (`pm25_ugm3`, positivo):** Indica que la concentración de material particulado fino $\text{PM}_{2.5}$ tiene un **efecto directo (factor de riesgo)** sobre la probabilidad de emitir alerta. Por cada desviación estándar que aumenta el $\text{PM}_{2.5}$ ($+19.48\ \mu\text{g/m}^3$), el logit $z$ se incrementa en $+2.1246$ unidades, acercando rápidamente la salida sigmoide a `1` (alerta). Además, como $|w_1| = 2.1246 > |w_2| = 1.5933$, el nivel de $\text{PM}_{2.5}$ es el predictor dominante del modelo.
+- **Signo de $w_2 = -1.5933$ (`viento_m_s`, negativo):** Indica que la velocidad del viento tiene un **efecto inverso (factor protector/mitigador)** sobre la probabilidad de alerta. Por cada desviación estándar adicional de velocidad del viento ($+2.24\ \text{m/s}$), el logit $z$ disminuye en $-1.5933$ unidades, reduciendo la probabilidad de declarar alerta ambiental.
+- **¿Tiene sentido para Cartago?** **Sí, tiene total sentido físico y ambiental para Cartago, Valle del Cauca.** En el municipio, las emisiones del flujo automotor (especialmente en la **Terminal** y la **Universidad**) junto con las quemas agrícolas de caña de azúcar en el norte del Valle incrementan el $\text{PM}_{2.5}$ ($w_1 > 0$). Cuando hay calma atmosférica (vientos bajos, $< 3.0\ \text{m/s}$), el contaminante queda atrapado sobre la ciudad y obliga a emitir alerta; en cambio, cuando soplan corrientes fuertes desde el corredor del río La Vieja y el río Cauca ($w_2 < 0$), el material particulado se dispersa y la calidad del aire se normaliza.
+
+---
+
+### 2. Según la frontera de decisión, ¿los datos son aproximadamente linealmente separables? ¿Cuántos registros quedan del lado equivocado?
+
+- **¿Son aproximadamente linealmente separables?** **Sí.** La frontera lineal trazada por el perceptrón logra separar correctamente **`67` de los `77` registros válidos**, alcanzando una **exactitud final de `87.01%`** y reduciendo la pérdida logarítmica desde `0.6931` hasta `0.2969`.
+- **¿Cuántos registros quedan del lado equivocado?** Quedan exactamente **`10` registros** del lado equivocado de la frontera de decisión ($12.99\%$ del total), los cuales están resaltados con aro naranja en `frontera_decision.png`:
+  - **4 Falsos Positivos** (su clase real es `0`, pero quedan debajo de la recta en la zona de alerta `1`):
+    - `M008` (Terminal: $\text{PM}_{2.5}=45.5$, viento $=2.3$, $\hat{y}=0.8357$)
+    - `M051` (Terminal: $\text{PM}_{2.5}=45.8$, viento $=4.6$, $\hat{y}=0.5061$, caso justo sobre la frontera)
+    - `M056` (Universidad: $\text{PM}_{2.5}=36.9$, viento $=2.0$, $\hat{y}=0.7113$)
+    - `M069` (Centro: $\text{PM}_{2.5}=25.6$, viento $=1.2$, $\hat{y}=0.5593$)
+  - **6 Falsos Negativos** (su clase real es `1`, pero quedan arriba de la recta en la zona sin alerta `0`):
+    - `M012` (Centro: $\text{PM}_{2.5}=60.0$, viento $=7.2$, $\hat{y}=0.4317$)
+    - `M017` (Universidad: $\text{PM}_{2.5}=39.2$, viento $=3.9$, $\hat{y}=0.4507$)
+    - `M038` (Hospital: $\text{PM}_{2.5}=54.4$, viento $=6.2$, $\hat{y}=0.4564$)
+    - `M040` (Universidad: $\text{PM}_{2.5}=24.5$, viento $=1.5$, $\hat{y}=0.4763$)
+    - `M068` (Universidad: $\text{PM}_{2.5}=24.4$, viento $=1.9$, $\hat{y}=0.4037$)
+    - `M071` (Universidad: $\text{PM}_{2.5}=28.4$, viento $=5.0$, $\hat{y}=0.1037$)
+
+---
+
+### 3. Evaluación de dos registros nuevos realistas con el modelo entrenado
+
+Se diseñaron dos escenarios realistas para Cartago y se escalaron utilizando la media ($\mu = [41.2974,\ 4.4636]$) y la desviación estándar ($\sigma = [19.4840,\ 2.2419]$) guardadas durante el entrenamiento:
+
+| Escenario en Cartago | Valores Originales ($x_1, x_2$) | Valores Escalados ($z_1, z_2$) | Logit ($z = X_{\text{std}} w + b$) | Probabilidad $\hat{y} = \sigma(z)$ | ClaseEsperada vs. Predicha |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Registro Nuevo A (Esperado = `1`):** Hora pico en estación *Terminal* con congestión de buses, quema de caña cercana y aire estancado. | `pm25_ugm3` = **`68.0`** $\mu\text{g/m}^3$<br>`viento_m_s` = **`1.5`** $\text{m/s}$ | $z_1 = \frac{68.0 - 41.2974}{19.4840} = \mathbf{+1.3705}$<br>$z_2 = \frac{1.5 - 4.4636}{2.2419} = \mathbf{-1.3220}$ | $z = 2.1246(1.3705) - 1.5933(-1.3220) - 0.3696 = \mathbf{+4.6484}$ | **`0.9905` (`99.05%`)** | Esperado: **`1`**<br>Predicho: **`1`** ($\ge 0.5$) |
+| **Registro Nuevo B (Esperado = `0`):** Mañana despejada en estación *Hospital* con bajo tráfico y brisa fresca del río La Vieja. | `pm25_ugm3` = **`18.0`** $\mu\text{g/m}^3$<br>`viento_m_s` = **`6.8`** $\text{m/s}$ | $z_1 = \frac{18.0 - 41.2974}{19.4840} = \mathbf{-1.1957}$<br>$z_2 = \frac{6.8 - 4.4636}{2.2419} = \mathbf{+1.0422}$ | $z = 2.1246(-1.1957) - 1.5933(1.0422) - 0.3696 = \mathbf{-4.5706}$ | **`0.0102` (`1.02%`)** | Esperado: **`0`**<br>Predicho: **`0`** ($< 0.5$) |
+
+- **Comentario:** En ambos casos **el resultado del modelo coincide exactamente con lo esperado**. En el Registro A, la combinación de alto $\text{PM}_{2.5}$ ($z_1 > 0$) y poco viento ($z_2 < 0$) suma dos contribuciones positivas al logit ($+2.91$ y $+2.11$), arrojando una certeza del **`99.05%`** de alerta. En el Registro B, el bajo $\text{PM}_{2.5}$ ($z_1 < 0$) y el viento fuerte ($z_2 > 0$) restan en la misma dirección, reduciendo la probabilidad de alerta a apenas **`1.02%`**.
+
+---
+
+### 4. ¿Qué recomendación concreta le haría a la entidad local? (Justificada con números del parcial)
+
+1. **Focalizar el control vehicular y las alertas tempranas en las estaciones *Universidad* y *Terminal*:**  
+   Los datos limpios demuestran que **Universidad** presenta **`15` alertas en `24` mediciones (`62.5%`)** y **Terminal** presenta **`11` alertas en `18` mediciones (`61.1%`)**, concentrando entre ambas **`26` de las `35` alertas totales (`74.29%`)** de Cartago. Se recomienda implementar restricción de ralentí para buses intermunicipales en la Terminal y corredores verdes/control de tráfico en horarios pico alrededor de la Universidad.
+2. **Establecer un protocolo operativo de alerta preventiva basado en la regla conjunta de $\text{PM}_{2.5}$ y viento:**  
+   Dado que la media de $\text{PM}_{2.5}$ en episodios con alerta es de **`54.26` $\mu\text{g/m}^3$** (frente a **`30.50` $\mu\text{g/m}^3$** sin alerta) y la velocidad media del viento en alerta cae a **`3.34` $\text{m/s}$** (frente a **`5.40` $\text{m/s}$** sin alerta), la entidad no debe esperar un único umbral fijo de $\text{PM}_{2.5}$, sino activar alerta preventiva siempre que la medición cruce la frontera aprendida por el perceptrón ($\text{viento\_m\_s} < 0.153 \cdot \text{pm25\_ugm3} - 2.39$, con exactitud comprobada del **`87.01%`**).
+3. **Automatizar reglas de validación en el software de captura de las estaciones:**  
+   En el archivo original (`84` filas) se encontraron **`4` registros duplicados**, **`3` sensores sin lectura de viento (`NaN`)**, **`3` números con coma decimal** y **`1` error de unidades (`M075` con `70100.0` en lugar de `70.1` $\mu\text{g/m}^3$)** que distorsionaba la media de **`41.30` $\mu\text{g/m}^3$** a **`950.78` $\mu\text{g/m}^3$**. Se recomienda configurar validación en base de datos que rechace $\text{PM}_{2.5} > 500\ \mu\text{g/m}^3$, estandarice el punto decimal y bloquee inserciones duplicadas por `medicion_id`.
+
+---
+
+### 5. ¿Qué limitaciones tiene este modelo para tomar decisiones reales?
+
+1. **Frontera estrictamente lineal en solo dos dimensiones:** El perceptrón solo puede trazar una línea recta en el plano $(\text{PM}_{2.5}, \text{viento})$, por lo que no logra capturar los **`10` casos fronterizos (`12.99%` de error)** donde existen interacciones no lineales.
+2. **Omisión de la estación y de variables meteorológicas críticas:** El modelo no incluye como entrada la variable categórica `estacion` (por ejemplo, `Universidad` tiene mayor propensión a alertas incluso con niveles moderados de $\text{PM}_{2.5}$ como en `M040`, `M068` y `M071`), ni variables clave para la dispersión atmosférica en Cartago como **humedad relativa, temperatura, radiación solar, dirección del viento o precipitación**.
+3. **Riesgo de Falsos Negativos en salud pública:** De los 10 errores del modelo, **6 son Falsos Negativos** (episodios donde sí hubo alerta real pero el modelo predijo `0` con umbral `0.5`, como `M012`, `M017`, `M038` y `M040` cuyas probabilidades estuvieron entre `0.43` y `0.48`). En salud ambiental es más grave no emitir una alerta necesaria que emitir una preventiva, por lo que en producción sería necesario reducir el umbral de decisión (ej. de `0.50` a `0.40`) y validar con un conjunto de prueba independiente (*train/test split*).
+
+---
+
+## Tarea 7. Verificación de Entregables del Repositorio
+
+| Archivo | Descripción | Estado |
+| :--- | :--- | :---: |
+| `Dockerfile` | Imagen Python 3.12 con entorno virtual e instalación de dependencias | Incluido |
+| `docker-compose.yml` | Servicio con `container_name: parcial2_ia` y volumen montado en `/app` | Incluido |
+| `requirements.txt` | `numpy`, `pandas`, `matplotlib`, `seaborn` | Incluido |
+| `src/parcial2.py` | Script completo (Tareas 2, 3, 4, 5 y 6; Perceptrón 100% en NumPy) | Incluido |
+| `data/grupo_05.csv` | Dataset original asignado al Grupo 05 (84 filas) | Incluido |
+| `data/grupo_05_limpio.csv` | Dataset depurado con Pandas (77 filas limpias) | Incluido |
+| `grafico1_dispersion.png` | Gráfico 1 Seaborn: Dispersión `pm25_ugm3` vs `viento_m_s` por clase | Incluido |
+| `grafico2_comparacion.png` | Gráfico 2 Seaborn: Boxplot por clase y Countplot por estación | Incluido |
+| `curva_aprendizaje.png` | Gráfico 3 Perceptrón: Curva de pérdida logarítmica en 300 épocas | Incluido |
+| `frontera_decision.png` | Gráfico 4 Perceptrón: Frontera de decisión en unidades originales | Incluido |
+| `README.md` | Documentación completa de las Tareas 1 a 7 con cifras específicas | Incluido |
